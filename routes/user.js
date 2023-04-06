@@ -26,10 +26,10 @@ router.get('/:1',(req, res) =>{
 })
 
 router.put('/:id', (req, res) =>{
-   const userId = req.params.id; // Lấy id của user từ URL
-  const updatedData = req.body; // Lấy thông tin cập nhật từ body
+   const userId = req.params.id; 
+  const updatedData = req.body; 
 
-  // Tìm user trong mảng và cập nhật thông tin mới
+  
   for (let i = 0; i < userIn4.length; i++) {
     if (userIn4[i].id == userId) {
       userIn4[i].fullname = updatedData.fullname;
