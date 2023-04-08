@@ -1,9 +1,11 @@
- const express = require('express');
+ const { json } = require('body-parser');
+const express = require('express');
+const Joi = require('joi');
 const router = express.Router();
 
 const userIn4 = [
 	{
-		"id": 1,
+		"id" :  1,
 		"fullname": "Nguyen Huy Tuong",
 		"gender": true,
 		"age": 18
@@ -17,12 +19,12 @@ const userIn4 = [
 ]
 
 router.get('/', (req, res) => {
-    res.send(userIn4)
+    res.json(userIn4)
 })
 
-router.get('/:1',(req, res) =>{
-    let gest1 = userIn4[0]
-    res.send(gest1)
+router.get('/:id',(req, res) =>{
+
+    res.json(req.params.id)
 })
 
 router.put('/:id', (req, res) =>{
@@ -41,28 +43,37 @@ router.put('/:id', (req, res) =>{
   res.sendStatus(204);
 
 })
-router.post('/', (req, res) => {
-      
-    const newUser = req.body
-    const newID = userIn4.length +1;
-    userIn4.push({"id": newID, ...newUser})
-  res.status(201).json(userIn4[userIn4.length - 1])
 
-})
 router.delete('/:id', (req,res) => {
-     const id = Number(req.params.id)
-     const userIndex = userIn4.findIndex(user => user.id === id);
-
   
- if (userIndex <= 0) {
-     res.status(404).end('that la qua dacng');
-  }
 
-  userIn4.splice(userIndex, 1);
+  userIn4.splice(req.params.id, 1);
+  for (let i = 0; i<= userIn4.length; i++) {
+       userIn4[i].id =i;
+}
+ return res.status(204).end();
+})
 
- return res.status(204).end('da xoa roi dcmmmmmm');
+const validate = (user) => {
+    const shecma = Joi.object({  
+        fullname: Joi.string().alphanum().min(3).max(30).required(),
+    age: Joi.number().integer().min(1).max(300).required(),
+    gender: Joi.string().max(3)})
+  
+shecma.validate(user)
+}
 
-});
+router.post('/', validate, (req,res,next) => {
+
+    const user = req.body;
+    req.body.id = userIn4.body.id +1;
+    userIn4.push(req.body)
+    res.status(201).json(userIn4)
+})
+
+
+
+
 
 
 
