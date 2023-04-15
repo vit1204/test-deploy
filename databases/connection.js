@@ -1,14 +1,16 @@
- const mysql2 = require('mysql2')
-let connections = mysql2.createConnection({
-  host: "localhost",
-  user: "root",
-  password: '1204',
-  database: 'nodejs'
-});
+console.log(process.env.DB_HOST);
 
-connections.connect((error) => {
-  if(error){throw error};
-  console.log('Connected');
-} )
+//  const mysql2 = require('mysql2')
+// let connections = mysql2.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: '1204',
+//   database: 'nodejs'
+// });
 
-module.exports = connections;
+// connections.connect((error) => {
+//   if(error){throw error};
+//   console.log('Connected');
+// } )
+
+// module.exports = connections;
