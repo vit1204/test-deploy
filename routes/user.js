@@ -1,11 +1,9 @@
- const { json } = require('body-parser');
-const express = require('express');
-const Joi = require('joi');
+ const express = require('express');
 const router = express.Router();
 
 const userIn4 = [
 	{
-		"id" :  1,
+		"id": 1,
 		"fullname": "Nguyen Huy Tuong",
 		"gender": true,
 		"age": 18
@@ -19,19 +17,19 @@ const userIn4 = [
 ]
 
 router.get('/', (req, res) => {
-    res.json(userIn4)
+    res.send(userIn4)
 })
 
-router.get('/:id',(req, res) =>{
-
-    res.json(req.params.id)
+router.get('/:1',(req, res) =>{
+    let gest1 = userIn4[0]
+    res.send(gest1)
 })
 
 router.put('/:id', (req, res) =>{
-   const userId = req.params.id; 
-  const updatedData = req.body; 
+   const userId = req.params.id; // Lấy id của user từ URL
+  const updatedData = req.body; // Lấy thông tin cập nhật từ body
 
-  
+  // Tìm user trong mảng và cập nhật thông tin mới
   for (let i = 0; i < userIn4.length; i++) {
     if (userIn4[i].id == userId) {
       userIn4[i].fullname = updatedData.fullname;
@@ -43,37 +41,28 @@ router.put('/:id', (req, res) =>{
   res.sendStatus(204);
 
 })
+router.post('/', (req, res) => {
+      
+    const newUser = req.body
+    const newID = userIn4.length +1;
+    userIn4.push({"id": newID, ...newUser})
+  res.status(201).json(userIn4[userIn4.length - 1])
 
+})
 router.delete('/:id', (req,res) => {
+     const id = Number(req.params.id)
+     const userIndex = userIn4.findIndex(user => user.id === id);
+
   
+ if (userIndex <= 0) {
+     res.status(404).end('that la qua dacng');
+  }
 
-  userIn4.splice(req.params.id, 1);
-  for (let i = 0; i<= userIn4.length; i++) {
-       userIn4[i].id =i;
-}
- return res.status(204).end();
-})
+  userIn4.splice(userIndex, 1);
 
-const validate = (user) => {
-    const shecma = Joi.object({  
-        fullname: Joi.string().alphanum().min(3).max(30).required(),
-    age: Joi.number().integer().min(1).max(300).required(),
-    gender: Joi.string().max(3)})
-  
-shecma.validate(user)
-}
+ return res.status(204).end('da xoa roi dcmmmmmm');
 
-router.post('/', validate, (req,res,next) => {
-
-    const user = req.body;
-    req.body.id = userIn4.body.id +1;
-    userIn4.push(req.body)
-    res.status(201).json(userIn4)
-})
-
-
-
-
+});
 
 
 
