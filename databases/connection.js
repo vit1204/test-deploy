@@ -3,7 +3,7 @@
 const dotenv = require('dotenv')
 dotenv.config()
 
-let connections = mysql2.createConnection({
+let connections = mysql2.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -11,8 +11,10 @@ let connections = mysql2.createConnection({
   
 });
 
-connections.connect(() => {
-  console.log('connected');
-} )
+connections.getConnection(() => {
+  console.log('connected to db');
+}
+  
+)
 
-module.exports = connections;
+module.exports = connections
