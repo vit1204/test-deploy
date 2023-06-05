@@ -1,18 +1,16 @@
 const express = require('express')
-require('dotenv').config();
-const mailservice = require('../service/mailservice')
+const dotenv = require('dotenv')
+dotenv.config()
 const connections = require('../databases/connection')
 const router = express.Router();
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const SECRET = process.env.JWT_SECRET
-const validatePUTRequest = require("../middleware/validatemiddleware.js")
-const validateDELETErequest = require('../middleware/validatemiddleware.js') 
-const validateSearch = require("../middleware/validatemiddleware.js");
-const { func, date } = require('joi');
+const {validatePUTRequest,validateSearch,validateDELETErequest} = require("../middleware/validatemiddleware");
+
 const { comparePassword, hashPassword } = require('../helper/hash');
 // UPDATE USER INFO
-router.put('/:id', validatePUTRequest ,function (req, res) {
+router.put('/:id' ,validatePUTRequest, (req, res) => {
   // Write your code here
   const  {name,age,gender} = req.body
   user_id = req.params.id;
@@ -20,7 +18,7 @@ router.put('/:id', validatePUTRequest ,function (req, res) {
     gender,
     name,
     age,
-    email
+
   };
   //is valid PUT information    
   if (name.length < 2) {
@@ -32,22 +30,17 @@ router.put('/:id', validatePUTRequest ,function (req, res) {
     return res.status(400).json({ error: "Age must be a positive number" });
   }
   
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-   if(!emailRegex.test(email)){
-  return res.status(400).json({Error:"invalid email"})
-    
-  }
   //Verify token
   const authorizationHeader = req.headers.authorization;
    const userToken = authorizationHeader.substring(7);
-  try {
+  
       const isTokenValid = jwt.verify(userToken, SECRET);
       
       // Authorization success
-      if (isTokenValid.userId == user.id) {
+      if (isTokenValid.userId === user_id) {
        
           //update user information
-          connections.query('UPDATE users SET name = ?, age = ?, gender = ? WHERE id = ?', [name, age,gender, user.id],(error, results, fields) => {
+          connections.query('UPDATE users SET name = ?, age = ?, gender = ? WHERE id = ?', [name, age,gender, user_id],(error, results, fields) => {
           if (error) {
               return res.status(500).json({ error: " server error" });
             }
@@ -62,23 +55,21 @@ router.put('/:id', validatePUTRequest ,function (req, res) {
       return res.status(401).json({
           message: 'unauthorized',
       });
-  } catch (error) {
-      return res.status(401).json({
-          message: "un verify"
-      });
+ 
     }
-  });
+  );
 
 
 
 //endpoint delete
  router.delete('/:id',validateDELETErequest,function(req,res){
+  const user_id = req.params.id
   const authorizationHeader = req.headers.authorization
   const userToken = authorizationHeader.substring(7)
   try{
     const validateToken = jwt.verify(userToken,SECRET)
-    if(validateToken=== user.id){
-       connections.query('UPDATE users SET name = NULL ,age = NULL ,gender = NULL WHERE id = ?',[name,  age,gender,user.id], (err,result) => {
+    if(validateToken=== user_id){
+       connections.query('UPDATE users SET name = NULL ,age = NULL ,gender = NULL WHERE id = ?',[name,age,gender,user_id], (err,result) => {
           if(err){
           throw err;
         }
@@ -135,14 +126,14 @@ return  res.json({
  
 
 //endpoint create user lấy field createBy
-router.post('/:create', async (req,res) => {
+router.post('/create', async (req,res) => {
   const {name,age,gender,email,username,password} = req.body;
   const timeDate = new Date(Date.now())
    const authorizationHeader = req.headers.authorization
   const userToken = authorizationHeader.substring(7)
-  try {
+ 
     const validateToken = jwt.verify(userToken,SECRET)
-     if(validateToken === user.id){
+     if(validateToken === user_id){
     return res.status(400).json({error:'user existed'})
     }
     else{
@@ -154,13 +145,9 @@ router.post('/:create', async (req,res) => {
        return res.status(200).json({message:'create successfully'}) 
       })
     }
-  }
   
+}) 
 
-catch (err){
-    return res.status(400).json({message:"error at endpoint create"})
-  }
-  })
 
   
   module.exports = router;

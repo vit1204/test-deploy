@@ -8,18 +8,9 @@ const { hashPassword, comparePassword } = require("../helper/hash");
 const { addAbortSignal } = require('nodemailer/lib/xoauth2');
 const { valid, required, link, invalid } = require('joi');
 const knex = require('knex')
-const validatePUTRquest = require('./user.js')
 const dotenv = require('dotenv')
 dotenv.config()
-const validateRegisterRequest = (req,res,next) => {
-  if(req.body.username && req.body.password){
-    return next();
-
-  }
-  else{
-    res.status(400).json({"message":"Error validate" })
-  }
-}
+const {validateRegisterRequest} = require('../middleware/validatemiddleware')
 
 //register endpoint
 
@@ -27,7 +18,7 @@ router.post('/register', validateRegisterRequest, async (req,res) => {
 const {username,password,email,name,gender,age,confirmedPassword} = req.body;
 
 const usernameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/
-  if (usernameRegex.test(username) && username.length < 3){
+  if (usernameRegex.test(username) && username.length < 3){   
     return res.status(400).json({Error: "Username must be over 3 charester and must be not include the special charesters"});
     }
   if(password.length < 3){
@@ -53,7 +44,7 @@ const usernameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâã�
       return res.status(500).status({Error: "server error"});
       
     }
-    else if(result.value === username || result.length > 0){
+    else if(result.length === username || result.length > 0){
         return res.status(400).json({Error: " username already exist"})
     }
     else{
@@ -68,7 +59,7 @@ const usernameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâã�
         email
       }
     } 
-    connections.query("INSERT INTO users SET ?",[DataUser],(error,result,fields) =>{
+    connections.query("INSERT INTO users SET ?",[DataUser ],(error,result,fields) =>{
       if(error){
         throw error;
       }
