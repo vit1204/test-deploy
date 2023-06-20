@@ -6,9 +6,8 @@ const nodemailer = require('nodemailer')
 const mailservice = require('../service/mailservice')
 const { hashPassword, comparePassword } = require("../helper/hash");
 const { addAbortSignal } = require('nodemailer/lib/xoauth2');
-const connection2 = require('../service/knex')
 const knex = require('knex')
-const query = require('../databases/data')
+
 const dotenv = require('dotenv')
 dotenv.config()
 const { validateRegisterRequest } = require('../middleware/validatemiddleware');
@@ -16,14 +15,13 @@ const { validateRegisterRequest } = require('../middleware/validatemiddleware');
 //register endpoint
 
 
-
-
 router.post('/register', validateRegisterRequest, async (req, res) => {
+
   try{
   const { name, age, gender, email, username, password, confirmPassword } = req.body
 
   //goi database xem user da ton tai hay ch
-  connections.query("SELECT * FROM users WHERE username = ?", [username], (error, result, fields) => {
+   await connections.query("SELECT * FROM users WHERE username = ?", [username], (error, result, fields) => {
     if (error) {
       return res.status(500).status({ Error: "server error" });
 
