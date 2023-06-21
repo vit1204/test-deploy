@@ -23,9 +23,10 @@ const validateDELETErequest = (req, res, next) => {
 }
 
 const validateRegisterRequest = async (req, res, next) => {
-  try {
     const { name, age, gender, username, password, confirmPassword, email } = req.body
 
+  try {
+ 
     if (!name || !age || !gender || !email || !username || !password || !confirmPassword) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -48,7 +49,7 @@ const validateRegisterRequest = async (req, res, next) => {
       return res.status(400).json({ Error: "age must be a number above 0" })
     }
 
-
+return  next()
 
   } catch (error) {
     console.log(error)

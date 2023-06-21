@@ -128,6 +128,7 @@ router.get('/pagination', validateSearch, async (req, res) => {
 router.post('/create', async (req, res,next) => {
   const { name, age, gender, email, username, password } = req.body;
   const timeDate = new Date(Date.now())
+
   const authorizationHeader = req.headers.authorization
   const userToken = authorizationHeader.substring(7)
 
@@ -145,7 +146,7 @@ router.post('/create', async (req, res,next) => {
       return res.status(200).json({ message: 'create successfully' })
     })
   }
-next()
+ return next()
 })
 
 

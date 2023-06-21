@@ -11,17 +11,16 @@ const knex = require('knex')
 const dotenv = require('dotenv')
 dotenv.config()
 const { validateRegisterRequest } = require('../middleware/validatemiddleware');
+const { NotebookCellTextDocumentFilter } = require('vscode-languageserver');
 
-//register endpoint
 
+router.post('/register', validateRegisterRequest, async (req, res,next) => {
 
-router.post('/register', validateRegisterRequest, async (req, res) => {
-
-  try{
+  
   const { name, age, gender, email, username, password, confirmPassword } = req.body
 
   //goi database xem user da ton tai hay ch
-   await connections.query("SELECT * FROM users WHERE username = ?", [username], (error, result, fields) => {
+    connections.query("SELECT * FROM users WHERE username = ?", [username], (error, result, fields) => {
     if (error) {
       return res.status(500).status({ Error: "server error" });
 
@@ -30,7 +29,7 @@ router.post('/register', validateRegisterRequest, async (req, res) => {
       return res.status(400).json({ Error: " username already exist" })
     }
     else {
-       const  { hashPassword, salt } = hashPassword(password)
+      const  { hashPassword, salt } = hashPassword(password)
       const DataUser = {
         name,
         age,
@@ -50,20 +49,13 @@ router.post('/register', validateRegisterRequest, async (req, res) => {
         }
       })
       }
-  
+
+      
     })
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "hay cuu lay endpoint nay giup em",
-      error
-    })
-  }
+
 })
 
-//login endpoint
-
+//endpoint login
 router.post('/login', (req, res) => {
   const { username, password } = req.body
   connections.query("SELECT * FROM users WHERE username= ?", [username], (error, result) => {
@@ -88,6 +80,8 @@ router.post('/login', (req, res) => {
     }
   })
 })
+
+
 
 
 
