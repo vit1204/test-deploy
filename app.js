@@ -12,6 +12,7 @@ app.use(express.json())
 const dotenv = require('dotenv')
 dotenv.config()
 
+
 app.use('/auth', authenRouter)
 app.use('/user', userRouter)
 app.listen( process.env.PORT , () => {

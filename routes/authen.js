@@ -29,7 +29,7 @@ router.post('/register', validateRegisterRequest, async (req, res,next) => {
       return res.status(400).json({ Error: " username already exist" })
     }
     else {
-      const  { hashPassword, salt } = hashPassword(password)
+        const  { hashPassword, salt } = hashPassword(password)
       const DataUser = {
         name,
         age,
@@ -50,7 +50,7 @@ router.post('/register', validateRegisterRequest, async (req, res,next) => {
       })
       }
 
-      
+
     })
 
 })
