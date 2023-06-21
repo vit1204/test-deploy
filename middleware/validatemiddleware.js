@@ -51,7 +51,7 @@ const validateRegisterRequest = async (req, res, next) => {
 
 return  next()
 
-  } catch (error) {
+  }   catch (error) {
     console.log(error)
     res.status(500).json({
       success: "false",
