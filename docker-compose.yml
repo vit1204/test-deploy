@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    tty: true
+    container_name: backend-s-group-app
+    ports:
+      - "3000:3000"
+    expose:
+        - 3000
+    environment:         
+       DB_USER : admin
+       DB_HOST : mysqldb
+       DB_DATABASE : user
+       DB_PASSWORD : 1204
+       DB_PORT: 3306  
+    volumes:
+      - ./:/var/www
+    depends_on:
+       mysqldb: 
+         condition: service_healthy
+    networks:
+      - example-network
+
+  mysqldb:
+    image: mysql:8.1.0
+    container_name: backend-sql
+    restart: 'always'
+    environment:
+       MYSQL_USER: admin
+       MYSQL_PASSWORD: 1204
+         
+       MYSQL_ROOT_PASSWORD :  1204
+       MYSQL_DATABASE : user
+       SERVICE_NAME: mysqldb 
+       TZ : UTC
+    ports:
+      - "3306:3306"
+    expose:
+        - 3306
+        
+    volumes:
+      - ./docker/mysql/data2:/var/lib/mysql
+    networks:
+      - example-network
+    healthcheck: 
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  example-network:
+    driver: bridge

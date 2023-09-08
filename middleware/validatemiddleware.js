@@ -1,19 +1,11 @@
-
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv")
-dotenv.config()
+const dotenv = require("dotenv");
+dotenv.config();
 const connections = require("../databases/connection");
 const { boolean } = require("joi");
-const SECRET = process.env.JWT_SECRET
+const SECRET = process.env.JWT_SECRET;
 
 dotenv.config();
-function validatePUTRequest(req, res, next) {
-  if (req.body.name && req.body.age && req.body.email) {
-    return next();
-  }
-  
-  return res.status(400).json({ message: "Error validating" });
-}
 
 const validateRegisterRequest = (req, res, next) => {
   const { name, age, gender, username, password, confirmPassword, email } =
@@ -45,17 +37,16 @@ const validateRegisterRequest = (req, res, next) => {
   if (!emailRegex.test(email)) {
     return res.status(400).json({ message: "invalid email" });
   }
-  if (typeof age !== 'number' || age < 0) {
+  if (typeof age !== "number" || age < 0) {
     return res.status(400).json({ message: "age must be a number above 0" });
   }
 
   return next();
 };
 
-const validateSearch = (req, res,next) => {
-
+const validateSearch = (req, res, next) => {
   const { page, limit, search } = req.query;
-  if (page < 0 ) {
+  if (page < 0) {
     return res.status(400).json({
       Error: "page number must be a positive number",
     });
@@ -63,7 +54,7 @@ const validateSearch = (req, res,next) => {
   if (limit < 0 || limit > 15) {
     return res.status(400).json({ error: "page must be limit from 1 to 14" });
   }
-  return next()
+  return next();
 };
 
 // const validateAdmin = (req, res, next) => {
@@ -111,12 +102,11 @@ const verifyToken = (req, res, next) => {
 //         else{
 //             return res.status(403).json('You are not allowed!')
 //         }
-//     }) 
+//     })
 // }
 
 module.exports = {
   validateSearch,
-  validatePUTRequest,
   // validateAdmin,
   validateRegisterRequest,
   verifyToken,

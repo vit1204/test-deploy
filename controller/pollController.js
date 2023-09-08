@@ -1,3 +1,4 @@
+const { response } = require("express");
 const connections = require("../databases/connection");
 const knex = require("../databases/knex");
 const dotenv = require("dotenv");
@@ -6,36 +7,33 @@ const jwt = require("jsonwebtoken");
 dotenv.config();
 
 const createPolls = async (req, res) => {
-  const { voteTitle, Question, options } = req.body;
-  const poll = {
-    voteTitle,
-    Question,
-    createdAt: new Date(Date.now()),
-  };
+  try {
+    const { voteTitle, Question, options } = req.body;
+    const poll = {
+      voteTitle,
+      Question,
+      createdAt: new Date(Date.now()),
+    };
+    const pollid = await knex("pools").insert(poll);
 
-  await connections.query("SET GLOBAL FOREIGN_KEY_CHECKS=0;");
-
-  await knex.insert(poll).into("pools").then((response) => {
-    connections.query("SELECT LAST_INSERT_ID();");
-    const PollId = response[0];
-    console.log(PollId, response);
-    const optionsData = options.map((option) => {
+    const optionData = options.map((option) => {
       return {
-        voteOption: option.voteOption,
-        Poll_ID: PollId,
+        voteOption: option,
+        PollId: pollid[0],
       };
     });
-    console.log(optionsData);
-    connections.query("SET GLOBAL FOREIGN_KEY_CHECKS=1;");
 
-    return knex.insert(optionsData).into("options");
-  })
-    .then(() => {
-      res.status(200).json({ message: "Poll added" });
-    }).catch((err) => {
-      console.log(err);
-      res.status(404).json({ message: "failed to add poll" });
+    console.log(optionData);
+    await knex("options").insert(optionData);
+    return res.status(200).json({
+      message: "poll added",
+      data: poll,
+      optionData,
     });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: "failed to add poll" });
+  }
 };
 
 const updatePolls = async (req, res) => {
@@ -90,7 +88,7 @@ const getPolls = async (req, res) => {
         message: "Poll not found",
       });
     }
-    const options = await knex("options").where("Poll_ID", pollId);
+    const options = await knex("options").where("PollId", pollId);
     const pollDetails = {
       PollId: poll.PollId,
       voteTitle: poll.voteTitle,
@@ -142,8 +140,6 @@ const submitOtions = async (req, res) => {
     const optionId = req.params.optionId;
     const userId = req.params.userId;
 
-    await connections.query("SET GLOBAL FOREIGN_KEY_CHECKS=0;");
-
     const user = await knex("users").where("id", userId).first();
     if (!user) {
       return res.status(404).json({
@@ -163,7 +159,6 @@ const submitOtions = async (req, res) => {
         message: "Option not found",
       });
     }
-    await connections.query("SET GLOBAL FOREIGN_KEY_CHECKS=1;");
 
     const userData = await knex("UserOption").insert({
       UserID: userId,

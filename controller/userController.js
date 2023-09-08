@@ -6,28 +6,22 @@ const SECRET = process.env.JWT_SECRET;
 
 const { comparePassword, hashPassword } = require("../helper/hash");
 
-const updateUser =  (req, res) => {
+const updateUser = (req, res) => {
   const { name, age, email } = req.body;
-  user_id = req.params.id;
+  const user_id = req.params.id;
   const userData = {
     name,
     age,
     email,
   };
-  //is valid PUT information
-  if (name.length < 2) {
-    return res
-      .status(400)
-      .json({ error: "Name must be at least 2 characters long" });
-  }
   if (typeof age !== "number" && age < 0) {
     return res.status(400).json({ error: "Age must be a positive number" });
   }
-  
 
   //update user information
   connections.query(
-    `UPDATE users SET name = "${userData.name}", age = "${userData.age}",  email = "${userData.email}" WHERE id = "${user_id}"`,
+    `UPDATE users SET name = "${userData.name}", age = "${userData.age}",  email = "${userData.email}" WHERE id = ?`,
+    user_id,
     (error, results, fields) => {
       if (error) {
         console.log(error);
@@ -45,8 +39,7 @@ const deleteUser = (req, res) => {
   const user_id = req.params.id;
   try {
     connections.query(
-      "DELETE FROM users WHERE id = ?",
-      user_id,
+      `DELETE FROM users WHERE id = ${user_id}`,
       (err, results) => {
         if (err) {
           throw err;

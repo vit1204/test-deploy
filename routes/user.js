@@ -3,12 +3,12 @@ const router = express.Router();
 const { getUser, updateUser, deleteUser, pagination } = require(
   "../controller/userController",
 );
-const { verifyToken, validatePUTRequest, validateSearch } = require(
+const { verifyToken, validateSearch } = require(
   "../middleware/validatemiddleware",
 );
 
 // UPDATE USER INFO
-router.put("/:id", validatePUTRequest, /* , verifyToken */ updateUser);
+router.put("/:id", /* , verifyToken */ updateUser);
 
 //endpoint delete
 router.delete("/:id", deleteUser);

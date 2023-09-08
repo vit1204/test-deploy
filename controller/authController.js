@@ -7,8 +7,8 @@ dotenv.config();
 const SECRET = process.env.JWT_SECRET;
 
 const register = (req, res) => {
-  const { name, age, gender, email, username, password } = req.body;
-
+  const { name, age, gender, email, username, password, confirmPassword } =
+    req.body;
   try {
     connections.query(
       "SELECT * FROM users WHERE username = ?",
@@ -46,7 +46,7 @@ const register = (req, res) => {
               }
               return res.status(200).json({
                 message: "regist successful ",
-                data: DataUser,
+                data: result,
               });
             },
           );
