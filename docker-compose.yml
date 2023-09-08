@@ -11,12 +11,6 @@ services:
       - "3000:3000"
     expose:
         - 3000
-    environment:         
-       DB_USER : admin
-       DB_HOST : mysqldb
-       DB_DATABASE : user
-       DB_PASSWORD : 1204
-       DB_PORT: 3306  
     volumes:
       - ./:/var/www
     depends_on:
@@ -30,20 +24,18 @@ services:
     container_name: backend-sql
     restart: 'always'
     environment:
-       MYSQL_USER: admin
-       MYSQL_PASSWORD: 1204
-         
+       MYSQL_PASSWORD: 1204   
        MYSQL_ROOT_PASSWORD :  1204
        MYSQL_DATABASE : user
        SERVICE_NAME: mysqldb 
        TZ : UTC
     ports:
-      - "3306:3306"
+      - "3307:3306"
     expose:
         - 3306
         
     volumes:
-      - ./docker/mysql/data2:/var/lib/mysql
+      - ./docker/mysql/data3:/var/lib/mysql
     networks:
       - example-network
     healthcheck: 
