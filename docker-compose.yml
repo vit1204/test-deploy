@@ -9,6 +9,8 @@ services:
     container_name: backend-s-group-app
     ports:
       - "3000:3000"
+    environment:
+        DB_HOST: mysqldb
     expose:
         - 3000
     volumes:
@@ -23,11 +25,11 @@ services:
     image: mysql:8.1.0
     container_name: backend-sql
     restart: 'always'
+    command: --default-authentication-plugin=caching_sha2_password
     environment:
-       MYSQL_PASSWORD: 1204   
+       MYSQL_USER: mysqldb    
        MYSQL_ROOT_PASSWORD :  1204
-       MYSQL_DATABASE : user
-       SERVICE_NAME: mysqldb 
+       MYSQL_DATABASE : user 
        TZ : UTC
     ports:
       - "3307:3306"
@@ -35,7 +37,7 @@ services:
         - 3306
         
     volumes:
-      - ./docker/mysql/data3:/var/lib/mysql
+      - ./docker/mysql/data:/var/lib/mysql
     networks:
       - example-network
     healthcheck: 

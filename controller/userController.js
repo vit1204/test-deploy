@@ -81,7 +81,7 @@ const pagination = (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  await connections.query(
+  connections.query(
     `SELECT * FROM users `,
     (error, results) => {
       if (error) {
