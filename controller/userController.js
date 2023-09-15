@@ -56,25 +56,21 @@ const deleteUser = (req, res) => {
 };
 
 const pagination = (req, res) => {
-  const searchTerm = req.query.name;
-  console.log(searchTerm);
   const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
   const limit = parseInt(req.query.limit) || 5; // Default to 5 users per page if not provided
   const offset = (page - 1) * limit;
 
-  const queryString =
-    `SELECT * FROM users WHERE name LIKE ? LIMIT ${offset}, ${limit}`;
+  const queryString = `SELECT * FROM users LIMIT ${offset}, ${limit}`;
 
   connections.query(
     queryString,
-    [`%${searchTerm}%`],
     function (error, results, fields) {
       if (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });
       } else {
         console.log(results);
-        res.status(200).json(results);
+        res.status(200).json({ Pagination: results });
       }
     },
   );
